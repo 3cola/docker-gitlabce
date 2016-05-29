@@ -1,0 +1,26 @@
+gitlab-server:
+  image: gitlab/gitlab-ce:latest
+  hostname: 147.75.205.1
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      external_url 'http://147.75.205.1:9080'
+      gitlab_rails['gitlab_shell_ssh_port'] = 9022
+  ports:
+    - 9080:9080/tcp
+    - 9022:9022/tcp
+  labels:
+    io.rancher.sidekicks: gitlab-data
+  volumes_from:
+  - gitlab-data
+
+gitlab-data:
+  labels:
+    io.rancher.container.start_once: 'true'
+  entrypoint:
+  - /bin/echo "This is gitlab-data container"
+  hostname: gitdata
+  image: gitlab/gitlab-ce:latest
+  volumes:
+  - /etc/gitlab
+  - /var/log/gitlab
+  - /var/opt/gitlab
